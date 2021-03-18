@@ -1,0 +1,13 @@
+###
+###  ALS processing template for OPALs
+###
+#
+# 1. copy this folder-file-system ("ALS_new_project") to your harddrive
+# 2. copy your ALS txt-files to 01_pointclouds
+#    --> if necessary, change projection of your region
+# 3. start OPALs
+#    --> go to this folder and execute 01_generate_fileBounds.bat
+# 4 check results in GIS 
+#
+#
+#
