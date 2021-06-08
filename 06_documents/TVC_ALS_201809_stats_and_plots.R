@@ -222,7 +222,7 @@ path.p <- "/home/stlange/Desktop/ALS_TVC_2018_Meta/"
 # 
 # fig.8 <- tm_shape(count,  projection = 32608) +
 #   tm_raster(style = "fixed", palette = "YlGnBu", breaks = breaks,
-#             title = "Number \nof stripes",
+#             title = "Number \nof strips",
 #             labels = c( "1","2","3","4")) +
 #   tm_layout(legend.position=c("right", "bottom"),
 #             legend.bg.color="white") +
