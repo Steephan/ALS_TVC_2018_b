@@ -7,7 +7,7 @@
     <columnSeparators val=" "/>
     <data>        
       <entry val="x"/>       
-      <entry val="y" />       
+      <entry val="y"/>       
       <entry val="z"/>
       <entry val="Amplitude"/>
       <entry val="EchoWidth"/>

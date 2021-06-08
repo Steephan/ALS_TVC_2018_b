@@ -1,3 +1,8 @@
+rem ---
+rem --- Processings steps
+rem --- by Stephan Lange
+rem --- last modified: 2021-04-14
+
 rem --- 01 prepare point cloud (I) ---
 
 set F1=01_pointclouds\repaired\ALS_L1B_20180822T203942_204538_ascii.txt
@@ -60,37 +65,47 @@ opalsExport -inf 02_intermediate\ALS1_all_echotypes_SOR.odm -outf 02_intermediat
 opalsCell -inf 02_intermediate\ALS1_all_echotypes_SOR.odm -outFile 04_rasters\ALS1_all_echotypes_SOR_pcount.tif -feature pcount -cel 1.0
 
 
-rem --- 06 Clean out the camp tents ---
-opalsImport -inf 02_intermediate\ALS_all_echotypes_SOR.txt -outf 02_intermediate\ALS_all_echotypes_SOR_ToClean.odm -iformat iformat_echotypes.xml -tilesize 120.0
+rem --- 06 Clean out the camp tents --- not really necessary SL 26.05.2021
+rem opalsImport -inf 02_intermediate\ALS_all_echotypes_SOR.txt -outf 02_intermediate\ALS_all_echotypes_SOR_ToClean.odm -iformat iformat_echotypes.xml -tilesize 120.0
 
 rem export camp and non-camp
-opalsExport -inf 02_intermediate\ALS_all_echotypes_SOR_ToClean.odm -outf 02_intermediate\ALS_all_echotypes_SOR_camp.txt -oformat oformat_echotypes.xml -filter "Region[03_region\region_ALS2016_camp.shp]"
-opalsExport -inf 02_intermediate\ALS_all_echotypes_SOR_ToClean.odm -outf 02_intermediate\ALS_all_echotypes_SOR_withoutCamp.txt -oformat oformat_echotypes.xml -filter "Region[03_region\region_ALS2016_withoutCamp.shp]"
+rem opalsExport -inf 02_intermediate\ALS_all_echotypes_SOR_ToClean.odm -outf 02_intermediate\ALS_all_echotypes_SOR_camp.txt -oformat oformat_echotypes.xml -filter "Region[03_region\region_ALS2016_camp.shp]"
+rem opalsExport -inf 02_intermediate\ALS_all_echotypes_SOR_ToClean.odm -outf 02_intermediate\ALS_all_echotypes_SOR_withoutCamp.txt -oformat oformat_echotypes.xml -filter "Region[03_region\region_ALS2016_withoutCamp.shp]"
 
 rem test
 rem opalsExport -inf 02_intermediate\ALS_all_echotypes_SOR_ToClean.odm -outf 02_intermediate\ALS_all_echotypes_SOR_withoutCampTest.txt -oformat oformat_echotypes.xml -filter "Region[region\region_ALS2016_withoutCampTest.shp]"
 
 rem merge point cloud parts
-opalsImport -inf 02_intermediate\ALS_all_echotypes_SOR_campClean.txt 02_intermediate\ALS_all_echotypes_SOR_withoutCamp.txt -outf 02_intermediate\ALS_all_echotypes_SOR.odm -iformat iformat_echotypes.xml -tilesize 120.0
-opalsExport -inf 02_intermediate\ALS_all_echotypes_SOR.odm -outf 02_intermediate\ALS_all_echotypes_SOR.txt -oformat oformat_echotypes.xml
+rem opalsImport -inf 02_intermediate\ALS_all_echotypes_SOR_campClean.txt 02_intermediate\ALS_all_echotypes_SOR_withoutCamp.txt -outf 02_intermediate\ALS_all_echotypes_SOR.odm -iformat iformat_echotypes.xml -tilesize 120.0
+rem opalsExport -inf 02_intermediate\ALS_all_echotypes_SOR.odm -outf 02_intermediate\ALS_all_echotypes_SOR.txt -oformat oformat_echotypes.xml
 
 rem --- 07 terrain probability ---
+rem filter by echo type 
+rem single and last with terrainprob python calculation
+rem first and middle with constant terrainprob of 0%
+opalsExport -inf 02_intermediate\ALS_all_echotypes_SOR.odm -outf 02_intermediate\ALS_first_echotypes_SOR.txt -filter "Generic[_EchoType == 1 OR _EchoType == 2]" -oformat oformat_echotypes.xml
+opalsImport -inf 02_intermediate\ALS_first_echotypes_SOR.txt -outf 02_intermediate\ALS_first_echotypes_SOR.odm -iformat iformat_echotypes.xml -tilesize 120.0
+opalsAddInfo -inf 02_intermediate\ALS_first_echotypes_SOR.odm -attribute "_terrainProb = 0.0"
+opalsExport -inf 02_intermediate\ALS_first_echotypes_SOR.odm -outf 02_intermediate\ALS_first_echotypes_SOR_terrainprob.txt -oformat oformat_terrainprob.xml
+opalsImport -inf 02_intermediate\ALS_first_echotypes_SOR_terrainprob.txt -outf 02_intermediate\ALS_first_echotypes_SOR_terrainprob_1.odm -iformat iformat_terrainprob_first.xml -tilesize 80.0
+
+opalsExport -inf 02_intermediate\ALS_all_echotypes_SOR.odm -outf 02_intermediate\ALS_last_echotypes_SOR.txt -filter "Generic[_EchoType == 0 OR _EchoType == 3]" -oformat oformat_echotypes.xml
 set PYPATH=C:\python_2_opals\python.exe
-python adaptDecDigits.py
-rem python terrainProbability1.py 02_intermediate\ALS_all_echotypes_SOR.txt 4 5 10000000
-python terrainProbability2pi.py 02_intermediate\ALS_all_echotypes_SOR.txt 4 5 10000000
-rem C:\python_2_opals\python terrainProbability1.py 02_intermediate\ALS1_all_echotypes_SOR.txt 4 5 40000000
+rem python adaptDecDigits.py ... only if necessary!
+python terrainProbability2pi.py 02_intermediate\ALS_last_echotypes_SOR.txt 4 5 10000000
+opalsImport -inf 02_intermediate\ALS_last_echotypes_SOR_terrainprob_last.txt -outf 02_intermediate\ALS_last_echotypes_SOR.odm -iformat iformat_terrainProb.xml -tilesize 80.0
+
+rem merge both odms again
+opalsImport -inf 02_intermediate\ALS_last_echotypes_SOR.odm 02_intermediate\ALS_first_echotypes_SOR_terrainprob_1.odm -outf 02_intermediate\ALS_last_echotypes_SOR.odm
+
 
 rem --- 08 DTM generation using OPALS (DTM module) ---
-
 set COORD=-coord_ref_sys EPSG:32608
 
-rem filter terrain points
-opalsImport -inf 02_intermediate\ALS_all_echotypes_SOR_terrainprob_all.txt -outf 02_intermediate\ALS1_all_echotypes_SOR_terrainprob.odm -iformat iformat_terrainProb.xml -tilesize 80.0
 
 rem RobFilter
-opalsRobFilter -inFile 02_intermediate\ALS1_all_echotypes_SOR_terrainprob.odm -debugOutFile 02_intermediate\ALS1_all_echotypes_SOR_terrainprob_grdPts.xyz -points_in_memory 16000000 -filter "Generic[_TerrainProb>0.0]" -sigmaApriori "_TerrainProb>0.5 ? 0.25 : 0.5"
-opalsGrid -inFile 02_intermediate\ALS1_all_echotypes_SOR_terrainprob.odm -outFile 04_rasters\ALS1_all_echotypes_SOR_terrain_RobF_robMovPlanes_1m.tif -interpolation robMovingPlanes -gridSize 1.0 -searchRad 7.5 -filter class[ground] %COORD% 
+opalsRobFilter -inFile 02_intermediate\ALS_last_echotypes_SOR.odm -debugOutFile 02_intermediate\ALS1_all_echotypes_SOR_terrainprob_grdPts.xyz -points_in_memory 16000000 -filter "Generic[_TerrainProb>0.0]" -sigmaApriori "_TerrainProb>0.5 ? 0.25 : 0.5"
+opalsGrid -inFile 02_intermediate\ALS_last_echotypes_SOR.odm -outFile 04_rasters\ALS1_all_echotypes_SOR_terrain_RobF_robMovPlanes_1m.tif -interpolation robMovingPlanes -gridSize 1.0 -searchRad 7.5 -filter class[ground] %COORD% 
 opalsShade -inFile 04_rasters\ALS1_all_echotypes_SOR_terrain_RobF_robMovPlanes_1m.tif -outf 04_rasters\shd_ALS1_all_echotypes_SOR_terrain_RobF_robMovPlanes_1m.tif -pixelsize 1.0 %COORD% 
 
 rem fill DTM
@@ -103,13 +118,13 @@ opalsShade -inFile 04_rasters\ALS1_all_echotypes_SOR_terrain_RobF_robMovPlanes_1
 rem --- 09 Veg. height generation using OPALS (AddInfo & Cell modules) ---
 
 rem compute vegetation height: Z - DTM
-opalsAddInfo -inf 02_intermediate\ALS1_all_echotypes_SOR_terrainprob.odm -gridfile 04_rasters\ALS1_all_echotypes_SOR_terrain_RobF_robMovPlanes_1m_filled.tif -attribute _nZ=Z-r[0]
-opalsAddInfo -inf 02_intermediate\ALS1_all_echotypes_SOR_terrainprob.odm -attribute "_nZ_corr = _nZ <0.0 ? 0.0 : _nZ"
+opalsAddInfo -inf 02_intermediate\ALS_last_echotypes_SOR.odm -gridfile 04_rasters\ALS1_all_echotypes_SOR_terrain_RobF_robMovPlanes_1m_filled.tif -attribute _nZ=Z-r[0]
+opalsAddInfo -inf 02_intermediate\ALS_last_echotypes_SOR.odm -attribute "_nZ_corr = _nZ <0.0 ? 0.0 : _nZ"
 
 set COORD=-coord_ref_sys EPSG:32608
 set LIM=-limit "(548184.000,7616081.000,564192.000,7630973.000)"
 
-opalsExport -inf 02_intermediate\ALS1_all_echotypes_SOR_terrainprob.odm -outf 02_intermediate\ALS1_all_echotypes_SOR_terrain.txt -oformat oformat_all.xml
+opalsExport -inf 02_intermediate\ALS_last_echotypes_SOR.odm -outf 02_intermediate\ALS1_all_echotypes_SOR_terrain.txt -oformat oformat_all.xml
 
 set PYPATH=C:\python_2_opals\python.exe
 python classifyVegType.py
@@ -128,10 +143,10 @@ rem opalsExport -inf 02_intermediate\ALS_all_echotypes_SOR_terrain_classified.od
 rem opalsExport -inf 02_intermediate\ALS_all_echotypes_SOR_terrain_classified.odm -outf 04_check\ALS_all_echotypes_SOR_terrain_classified_tile5.txt -oformat oformat_all.xml -filter "Region[extent_tiles\region_ALS2016_t5.shp]"
 
 rem output vegHeight rasters
-opalsCell -inf 02_intermediate\ALS1_all_echotypes_SOR_terrainprob.odm -outf 04_rasters\ALS_all_echotypes_SOR_nZ_max_1m.tif -cellsize 1.0 -attribute _nZ_corr -feature max %COORD% %LIM% -filter "Generic[_nZ_corr> 0.0]"
-opalsCell -inf 02_intermediate\ALS1_all_echotypes_SOR_terrainprob.odm -outf 04_rasters\ALS_all_echotypes_SOR_nZ_mean_1m.tif -cellsize 1.0 -attribute _nZ_corr -feature mean %COORD% %LIM% -filter "Generic[_nZ_corr> 0.0]"
-opalsCell -inf 02_intermediate\ALS1_all_echotypes_SOR_terrainprob.odm -outf 04_rasters\ALS_all_echotypes_SOR_nZ_q99_1m.tif -cellsize 1.0 -attribute _nZ_corr -feature quantile:0.99 %COORD% %LIM% -filter "Generic[_nZ_corr> 0.0]"
-opalsCell -inf 02_intermediate\ALS1_all_echotypes_SOR_terrainprob.odm -outf 04_rasters\ALS_all_echotypes_SOR_nZ_q95_1m.tif -cellsize 1.0 -attribute _nZ_corr -feature quantile:0.95 %COORD% %LIM% -filter "Generic[_nZ_corr> 0.0]"
+opalsCell -inf 02_intermediate\ALS1_all_echotypes_SOR_terrain_classified.odm -outf 04_rasters\ALS_all_echotypes_SOR_nZ_max_1m.tif -cellsize 1.0 -attribute _nZ_corr -feature max %COORD% %LIM% -filter "Generic[_nZ_corr> 0.0]"
+opalsCell -inf 02_intermediate\ALS1_all_echotypes_SOR_terrain_classified.odm -outf 04_rasters\ALS_all_echotypes_SOR_nZ_mean_1m.tif -cellsize 1.0 -attribute _nZ_corr -feature mean %COORD% %LIM% -filter "Generic[_nZ_corr> 0.0]"
+opalsCell -inf 02_intermediate\ALS1_all_echotypes_SOR_terrain_classified.odm -outf 04_rasters\ALS_all_echotypes_SOR_nZ_q99_1m.tif -cellsize 1.0 -attribute _nZ_corr -feature quantile:0.99 %COORD% %LIM% -filter "Generic[_nZ_corr> 0.0]"
+opalsCell -inf 02_intermediate\ALS1_all_echotypes_SOR_terrain_classified.odm -outf 04_rasters\ALS_all_echotypes_SOR_nZ_q95_1m.tif -cellsize 1.0 -attribute _nZ_corr -feature quantile:0.95 %COORD% %LIM% -filter "Generic[_nZ_corr> 0.0]"
 
 rem fill vegHeight rasters
 rem mean
@@ -142,14 +157,15 @@ opalsStatFilter -inFile 04_rasters\ALS_all_echotypes_SOR_nZ_max_1m.tif -outFile 
 opalsAlgebra -inFile 04_rasters\ALS_all_echotypes_SOR_nZ_max_1m.tif 04_rasters\ALS_all_echotypes_SOR_nZ_max_1m_smooth.tif -outFile 04_rasters\ALS_all_echotypes_SOR_nZ_max_1m_filled.tif -formula "return r[1] if ( r[0] is None) else r[0]" -gridSize 1.0 %COORD% %LIM%
 
 rem rem calculate VegRatio: Number of points with vegetation heights> 1.5 m / number of all points
-opalsCell -inf 02_intermediate\ALS1_all_echotypes_SOR_terrainprob.odm -outf 04_rasters\ALS_all_echotypes_SOR_pcount_gt150_1m.tif -cellsize 1.0 -feature pcount -filter "Generic[_nZ_corr>= 1.5]" %COORD% %LIM%
-opalsCell -inf 02_intermediate\ALS1_all_echotypes_SOR_terrainprob.odm -outf 04_rasters\ALS_all_echotypes_SOR_pcount_1m.tif -cellsize 1.0 -feature pcount %COORD% %LIM%
-opalsAlgebra -inf 04_rasters\ALS_all_echotypes_SOR_pcount_gt150_1m.tif 04_rasters\ALS_all_echotypes_SOR_pcount_1m.tif -outf 04_rasters\ALS_all_echotypes_SOR_vegratio150cm_1m.tif -formula "float(r[0]) / float(r[1])" -gridsize 1.0 %COORD% %LIM%
+opalsCell -inf 02_intermediate\ALS1_all_echotypes_SOR_terrain_classified.odm -outf 04_rasters\ALS_all_echotypes_SOR_pcount_gt150_1m.tif -cellsize 1.0 -feature pcount -filter "Generic[_nZ_corr>= 1.5]" %COORD% %LIM%
+opalsCell -inf 02_intermediate\ALS1_all_echotypes_SOR_terrain_classified.odm -outf 04_rasters\ALS_all_echotypes_SOR_pcount_1m.tif -cellsize 1.0 -feature pcount %COORD% %LIM%
+rem opalsAlgebra -inf 04_rasters\ALS_all_echotypes_SOR_pcount_gt150_1m.tif 04_rasters\ALS_all_echotypes_SOR_pcount_1m.tif -outf 04_rasters\ALS_all_echotypes_SOR_vegratio150cm_1m.tif -formula "float(r[0]) / float(r[1])" -gridsize 1.0 %COORD% %LIM%
+opalsAlgebra -inf 04_rasters\ALS_all_echotypes_SOR_pcount_gt150_1m.tif 04_rasters\ALS_all_echotypes_SOR_pcount_1m.tif -outf 04_rasters\ALS_all_echotypes_SOR_vegratio150cm_1m.tif -formula "return float(r[0]) / float(r[1]) if r[1]>0 else None" -gridsize 1.0 %COORD% %LIM%
 
 rem --- 11 Extraction of individual trees from DSM ---
 
 rem generate DSM and fill
-opalsCell -inf 02_intermediate\ALS1_all_echotypes_SOR_terrainprob.odm -outf 04_rasters\ALS_all_echotypes_SOR_Z_max_1m.tif -cellsize 1.0 -feature max %COORD% %LIM%
+opalsCell -inf 02_intermediate\ALS1_all_echotypes_SOR_terrain_classified.odm -outf 04_rasters\ALS_all_echotypes_SOR_Z_max_1m.tif -cellsize 1.0 -feature max %COORD% %LIM%
 opalsStatFilter -inFile 04_rasters\ALS_all_echotypes_SOR_Z_max_1m.tif -outFile 04_rasters\ALS_all_echotypes_SOR_Z_max_1m_smooth.tif -feature mean -kernelSize 3 %COORD% %LIM%
 opalsAlgebra -inFile 04_rasters\ALS_all_echotypes_SOR_Z_max_1m.tif 04_rasters\ALS_all_echotypes_SOR_Z_max_1m_smooth.tif -outFile 04_rasters\ALS_all_echotypes_SOR_Z_max_1m_filled.tif -formula "return r[1] if ( r[0] is None) else r[0]" -gridSize 1.0 %COORD% %LIM%
 
@@ -157,3 +173,16 @@ rem Position of trees/shrubs with height> 1.5 m. Positions were extracted based 
 opalsStatFilter -inFile 04_rasters\ALS_all_echotypes_SOR_nZ_max_1m_filled.tif -outFile 04_rasters\ALS_all_echotypes_SOR_nZ_max_1m_ptstats_max_k3.tif -feature max -kernelSize 3 %COORD% %LIM%
 
 rem local maxima to point shapefile done in ArcGIS: Con("ALS_all_echotypes_SOR_nZ_max_1m_filled.tif" ==  "ALS_all_echotypes_SOR_nZ_max_1m_ptstats_max_k3.tif",Con("ALS_all_echotypes_SOR_nZ_max_1m_filled.tif">= 1.5,1))
+rem export roi pointclouds
+opalsImport -inf 02_intermediate\ALS1_all_echotypes_SOR_terrain_classified.txt -outf 02_intermediate\ALS1_all_echotypes_SOR_terrain_classified.odm -iformat iformat_all.xml -tilesize 120.0
+rem opalsExport -inf 02_intermediate\ALS1_all_echotypes_SOR_terrain_classified.odm -outf 04_check\TVC_ALS_2018b_roi_bridge_tvc.txt -oformat oformat_all.xml -filter "Region[03_region\roi_bridge_tvc.shp]"
+rem opalsExport -inf 02_intermediate\ALS1_all_echotypes_SOR_terrain_classified.odm -outf 04_check\TVC_ALS_2018b_roi_south_trees.txt -oformat oformat_all.xml -filter "Region[03_region\roi_south_trees.shp]"
+
+rem test las opals format
+rem opalsExport -inf 02_intermediate\ALS1_all_echotypes_SOR_terrain_classified.odm -outf 04_check\TVC_ALS_2018b_roi_bridge_tvc.las -oformat oformat_pangaea_las.xml -filter "Region[03_region\roi_bridge_tvc.shp]"
+rem opalsExport -inf 02_intermediate\ALS1_all_echotypes_SOR_terrain_classified.odm -outf 04_check\TVC_ALS_2018b_roi_bridge_tvc.las -oformat oformat_pangaea_las.xml -limit 550000 7620000 550100 7620100
+
+opalsExport -inf 02_intermediate\ALS1_all_echotypes_SOR_terrain_classified.odm -outf 04_check\TVC_ALS_2018.laz -oformat oformat_pangaea_las.xml 
+
+
+

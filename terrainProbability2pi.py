@@ -200,7 +200,7 @@ def main():
     plt.axvline(x = medEW, c = 'black', alpha = 0.9, label = 'Mean', linewidth = 0.9)
 
     plt.ylim(0,600)
-    plt.xlim(0,100)
+    plt.xlim(0,50)
 
 # add grid
     ax.set_axisbelow(True)
@@ -237,7 +237,7 @@ def main():
     print("\nAdding terrain probability to point cloud file: 0%% done",)
     c = 0
     p = 5
-    outfile= "02_intermediate/" + basename + "_terrainprob_all.txt"
+    outfile= "02_intermediate/" + basename + "_terrainprob_last.txt"
     with open(outfile,"w") as f:
         with open(infile,"r") as ifo:
             c = 0
