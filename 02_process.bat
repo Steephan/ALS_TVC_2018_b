@@ -44,6 +44,7 @@ rem --- 02 merge point clouds ---
 rem opalsImport -inf 02_intermediate\ALS_L1B_20180822.odm -outf 02_intermediate\ALS_all.odm -tilesize 150.0
 
 rem --- 03 process point cloud ---
+rem opalsExport -inf 02_intermediate\ALS_all.odm -outf 04_check\TVC_ALS_2018b_roi_trees_tvc_1.las -limit 561144 7626892 562564 7627008
 
 rem Add EchoRank
 opalsAddInfo -inf 02_intermediate\ALS_all.odm -points_in_memory 5000000 -attribute _EchoRank(unsignedByte)=_EchoCount-EchoNumber
@@ -56,14 +57,17 @@ python classifyEchoType1.py
 
 rem --- 05 SOR filter ---
 opalsImport -inf 02_intermediate\ALS1_all_echotypes.txt -outf 02_intermediate\ALS1_all_echotypes.odm -iformat iformat_echotypes.xml -tilesize 80.0
-opalsExport -inf 02_intermediate\ALS1_all_echotypes.odm -outf 02_intermediate\ALS1_all_echotypes_part.txt -oformat oformat_echotypes.xml
-outlier.exe 02_intermediate\ALS1_all_echotypes_part.txt 02_intermediate\ALS1_all_echotypes_part_SOR.txt 12 2.0
+rem opalsExport -inf 02_intermediate\ALS1_all_echotypes.odm -outf 02_intermediate\ALS1_all_echotypes_part.txt -oformat oformat_echotypes.xml
+rem outlier.exe 02_intermediate\ALS1_all_echotypes_part.txt 02_intermediate\ALS1_all_echotypes_part_SOR.txt 12 2.0
 rem outlier.exe 02_intermediate\ALS1_all_echotypes_part.txt 02_intermediate\ALS_all_echotypes_part_SOR.txt 6 1.0
-opalsImport -inf 02_intermediate\ALS1_all_echotypes_part_SOR.txt -outf 02_intermediate\ALS1_all_echotypes_part_SOR.odm -iformat iformat_echotypes.xml -tilesize 80.0
-opalsImport -inf 02_intermediate\ALS1_all_echotypes_part_SOR.odm -outf 02_intermediate\ALS1_all_echotypes_SOR.odm -tilesize 120.0
-opalsExport -inf 02_intermediate\ALS1_all_echotypes_SOR.odm -outf 02_intermediate\ALS1_all_echotypes_SOR.txt -oformat oformat_echotypes.xml
+rem opalsImport -inf 02_intermediate\ALS1_all_echotypes_part_SOR.txt -outf 02_intermediate\ALS1_all_echotypes_part_SOR.odm -iformat iformat_echotypes.xml -tilesize 80.0
+rem opalsImport -inf 02_intermediate\ALS1_all_echotypes_part_SOR.odm -outf 02_intermediate\ALS1_all_echotypes_SOR.odm -tilesize 120.0
+rem opalsExport -inf 02_intermediate\ALS1_all_echotypes_SOR.odm -outf 02_intermediate\ALS1_all_echotypes_SOR.txt -oformat oformat_echotypes.xml
+rem opalsCell -inf 02_intermediate\ALS1_all_echotypes_SOR.odm -outFile 04_rasters\ALS1_all_echotypes_SOR_pcount.tif -feature pcount -cel 1.0
 opalsCell -inf 02_intermediate\ALS1_all_echotypes_SOR.odm -outFile 04_rasters\ALS1_all_echotypes_SOR_pcount.tif -feature pcount -cel 1.0
 
+rem opalsExport -inf 02_intermediate\ALS1_all_echotypes.odm -outf 04_check\TVC_ALS_2018b_roi_trees_tvc_2.las -limit 561144 7626892 562564 7627008
+rem opalsExport -inf 02_intermediate\ALS1_all_echotypes_SOR.odm -outf 04_check\TVC_ALS_2018b_roi_trees_tvc_4.las -limit 561144 7626892 562564 7627008
 
 rem --- 06 Clean out the camp tents --- not really necessary SL 26.05.2021
 rem opalsImport -inf 02_intermediate\ALS_all_echotypes_SOR.txt -outf 02_intermediate\ALS_all_echotypes_SOR_ToClean.odm -iformat iformat_echotypes.xml -tilesize 120.0
@@ -124,7 +128,8 @@ opalsAddInfo -inf 02_intermediate\ALS_last_echotypes_SOR.odm -attribute "_nZ_cor
 set COORD=-coord_ref_sys EPSG:32608
 set LIM=-limit "(548184.000,7616081.000,564192.000,7630973.000)"
 
-opalsExport -inf 02_intermediate\ALS_last_echotypes_SOR.odm -outf 02_intermediate\ALS1_all_echotypes_SOR_terrain.txt -oformat oformat_all.xml
+rem opalsExport -inf 02_intermediate\ALS_last_echotypes_SOR.odm -outf 02_intermediate\ALS1_all_echotypes_SOR_terrain.txt -oformat oformat_all.xml
+opalsExport -inf 02_intermediate\ALS_last_echotypes_SOR.odm -outf 02_intermediate\ALS1_all_echotypes_SOR_terrain.txt  -filter "Generic[_nZ <= 20]" -oformat oformat_all.xml
 
 set PYPATH=C:\python_2_opals\python.exe
 python classifyVegType.py
@@ -183,6 +188,7 @@ rem opalsExport -inf 02_intermediate\ALS1_all_echotypes_SOR_terrain_classified.o
 rem opalsExport -inf 02_intermediate\ALS1_all_echotypes_SOR_terrain_classified.odm -outf 04_check\TVC_ALS_2018b_roi_bridge_tvc.las -oformat oformat_pangaea_las.xml -limit 550000 7620000 550100 7620100
 
 opalsExport -inf 02_intermediate\ALS1_all_echotypes_SOR_terrain_classified.odm -outf 04_check\TVC_ALS_2018.laz -oformat oformat_pangaea_las.xml 
+opalsExport -inf 02_intermediate\ALS1_all_echotypes_SOR_terrain_classified.odm -outf 04_check\TVC_ALS_2018b_roi_trees_tvc_2.las -oformat oformat_pangaea_las.xml -limit 561144 7626892 562564 7627008
 
 
 
