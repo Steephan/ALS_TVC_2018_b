@@ -128,6 +128,7 @@ opalsAddInfo -inf 02_intermediate\ALS_last_echotypes_SOR.odm -attribute "_nZ_cor
 set COORD=-coord_ref_sys EPSG:32608
 set LIM=-limit "(548184.000,7616081.000,564192.000,7630973.000)"
 
+rem --- filter point cloud by threshold of 20 m above ground
 rem opalsExport -inf 02_intermediate\ALS_last_echotypes_SOR.odm -outf 02_intermediate\ALS1_all_echotypes_SOR_terrain.txt -oformat oformat_all.xml
 opalsExport -inf 02_intermediate\ALS_last_echotypes_SOR.odm -outf 02_intermediate\ALS1_all_echotypes_SOR_terrain.txt  -filter "Generic[_nZ <= 20]" -oformat oformat_all.xml
 
