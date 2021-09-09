@@ -191,5 +191,10 @@ rem opalsExport -inf 02_intermediate\ALS1_all_echotypes_SOR_terrain_classified.o
 opalsExport -inf 02_intermediate\ALS1_all_echotypes_SOR_terrain_classified.odm -outf 04_check\TVC_ALS_2018.laz -oformat oformat_pangaea_las.xml 
 opalsExport -inf 02_intermediate\ALS1_all_echotypes_SOR_terrain_classified.odm -outf 04_check\TVC_ALS_2018b_roi_trees_tvc_2.las -oformat oformat_pangaea_las.xml -limit 561144 7626892 562564 7627008
 
+rem generate amplitude raster
+set COORD=-coord_ref_sys EPSG:32608
+set LIM=-limit "(548184.000,7616081.000,564192.000,7630973.000)"
+opalsGrid -inf 02_intermediate\ALS1_all_echotypes_SOR_terrain_classified.odm -outf 04_rasters\ALS_all_echotypes_SOR_amplitude_1m.tif -interpolation robMovingPlanes -gridSize 1.0 -searchRad 7.5 -attribute Amplitude %COORD%
+opalsGrid -inf 02_intermediate\ALS1_all_echotypes_SOR_terrain_classified.odm -outf 04_rasters\ALS_all_echotypes_SOR_echowith_1m.tif -interpolation robMovingPlanes -gridSize 1.0 -searchRad 7.5 -attribute EchoWidth %COORD%
 
 
