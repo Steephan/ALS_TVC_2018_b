@@ -28,7 +28,7 @@ Alfred-Wegener-Institut" />
 <g id="xMajorGrid" stroke="rgb(200,220,255)" stroke-width="1"></g>
 <g id="yMinorTicks" stroke="rgb(0,0,0)" stroke-width="1"><path d="M73.8,541 L75.8,541 " fill="none"/></g>
 <g id="xMinorTicks" stroke="rgb(0,0,0)" stroke-width="1"></g>
-<g id="yMajorTicks" stroke="rgb(0,0,0)" stroke-width="2"><path d="M70.8,541 L75.8,541 M70.8,443 L75.8,443 M70.8,346 L75.8,346 M70.8,248 L75.8,248 M70.8,151 L75.8,151 M70.8,53 L75.8,53 M70.8,541 L75.8,541 " fill="none"/></g>
+<g id="yMajorTicks" stroke="rgb(0,0,0)" stroke-width="2"><path d="M70.8,541 L75.8,541 M70.8,480 L75.8,480 M70.8,419 L75.8,419 M70.8,358 L75.8,358 M70.8,297 L75.8,297 M70.8,236 L75.8,236 M70.8,175 L75.8,175 M70.8,114 L75.8,114 M70.8,53 L75.8,53 M70.8,541 L75.8,541 " fill="none"/></g>
 <g id="xMajorTicks" stroke="rgb(0,0,0)" stroke-width="2"><path d="M75.8,541 L75.8,546 M192,541 L192,546 M309,541 L309,546 M425,541 L425,546 M541,541 L541,546 M658,541 L658,546 M774,541 L774,546 " fill="none"/></g>
 <g id="xTicksValues">
 <text x="75.8" y="562" text-anchor="middle" font-size="12" font-family="Lucida Sans Unicode">0</text>
@@ -40,26 +40,29 @@ Alfred-Wegener-Institut" />
 <text x="774" y="562" text-anchor="middle" font-size="12" font-family="Lucida Sans Unicode">0.6</text></g>
 <g id="yTicksValues">
 <text x="64.8" y="543" text-anchor="end" font-size="12" font-family="Lucida Sans Unicode">0</text>
-<text x="64.8" y="446" text-anchor="end" font-size="12" font-family="Lucida Sans Unicode">10</text>
-<text x="64.8" y="348" text-anchor="end" font-size="12" font-family="Lucida Sans Unicode">20</text>
-<text x="64.8" y="251" text-anchor="end" font-size="12" font-family="Lucida Sans Unicode">30</text>
-<text x="64.8" y="153" text-anchor="end" font-size="12" font-family="Lucida Sans Unicode">40</text>
-<text x="64.8" y="55.4" text-anchor="end" font-size="12" font-family="Lucida Sans Unicode">50</text>
+<text x="64.8" y="482" text-anchor="end" font-size="12" font-family="Lucida Sans Unicode">5</text>
+<text x="64.8" y="421" text-anchor="end" font-size="12" font-family="Lucida Sans Unicode">10</text>
+<text x="64.8" y="360" text-anchor="end" font-size="12" font-family="Lucida Sans Unicode">15</text>
+<text x="64.8" y="299" text-anchor="end" font-size="12" font-family="Lucida Sans Unicode">20</text>
+<text x="64.8" y="238" text-anchor="end" font-size="12" font-family="Lucida Sans Unicode">25</text>
+<text x="64.8" y="177" text-anchor="end" font-size="12" font-family="Lucida Sans Unicode">30</text>
+<text x="64.8" y="116" text-anchor="end" font-size="12" font-family="Lucida Sans Unicode">35</text>
+<text x="64.8" y="55.4" text-anchor="end" font-size="12" font-family="Lucida Sans Unicode">40</text>
 <text x="64.8" y="543" text-anchor="end" font-size="12" font-family="Lucida Sans Unicode">0</text></g>
 <g id="yLabel">
 <text x="42.9" y="297" text-anchor="middle" transform = "rotate(-90 42.9 297 )" font-size="14" font-family="Lucida Sans Unicode">density of interpolation sigma [%]</text></g>
 <g id="xLabel">
 <text x="425" y="577" text-anchor="middle" font-size="14" font-family="Lucida Sans Unicode">interpolation sigma</text></g>
-<g id="plotPoints" clip-path="url(#plot_window)"><g stroke="rgb(139,0,0)" fill="rgb(255,160,122)" stroke-width="2"><path d="M75.8,541 L75.8,524 L105,524 L105,541 Z" fill="rgb(255,160,122)"/><path d="M105,541 L105,266 L134,266 L134,541 ZM134,541 L134,140 L163,140 L163,541 ZM163,541 L163,384 L192,384 L192,541 ZM192,541 L192,487 L221,487 L221,541 ZM221,541 L221,516 L250,516 L250,541 ZM250,541 L250,527 L279,527 L279,541 ZM279,541 L279,532 L309,532 L309,541 ZM309,541 L309,535 L338,535 L338,541 ZM338,541 L338,536 L367,536 L367,541 ZM367,541 L367,538 L396,538 L396,541 ZM396,541 L396,538 L425,538 L425,541 ZM425,541 L425,539 L454,539 L454,541 ZM454,541 L454,540 L483,540 L483,541 ZM483,541 L483,540 L512,540 L512,541 ZM512,541 L512,541 L541,541 L541,541 ZM541,541 L541,541 L570,541 L570,541 ZM570,541 L570,541 L599,541 L599,541 ZM599,541 L599,541 L629,541 L629,541 ZM629,541 L629,541 L658,541 L658,541 Z" fill="rgb(173,216,230)"/><path d="M658,541 L658,540 L687,540 L687,541 Z" fill="rgb(255,160,122)"/></g>
+<g id="plotPoints" clip-path="url(#plot_window)"><g stroke="rgb(139,0,0)" fill="rgb(255,160,122)" stroke-width="2"><path d="M75.8,541 L75.8,505 L105,505 L105,541 Z" fill="rgb(255,160,122)"/><path d="M105,541 L105,158 L134,158 L134,541 ZM134,541 L134,73.8 L163,73.8 L163,541 ZM163,541 L163,362 L192,362 L192,541 ZM192,541 L192,476 L221,476 L221,541 ZM221,541 L221,510 L250,510 L250,541 ZM250,541 L250,523 L279,523 L279,541 ZM279,541 L279,529 L309,529 L309,541 ZM309,541 L309,533 L338,533 L338,541 ZM338,541 L338,535 L367,535 L367,541 ZM367,541 L367,537 L396,537 L396,541 ZM396,541 L396,538 L425,538 L425,541 ZM425,541 L425,539 L454,539 L454,541 ZM454,541 L454,540 L483,540 L483,541 ZM483,541 L483,540 L512,540 L512,541 ZM512,541 L512,540 L541,540 L541,541 ZM541,541 L541,541 L570,541 L570,541 ZM570,541 L570,541 L599,541 L599,541 ZM599,541 L599,541 L629,541 L629,541 ZM629,541 L629,541 L658,541 L658,541 Z" fill="rgb(173,216,230)"/><path d="M658,541 L658,539 L687,539 L687,541 Z" fill="rgb(255,160,122)"/></g>
 </g>
 <g id="title">
 <text x="400" y="36" text-anchor="middle" font-size="18" font-family="Lucida Sans Unicode">Robust Interpolation Histogram: ALS_last_echotypes_SOR</text></g>
 <g id="plotXValues"></g>
 <g id="plotYValues"></g>
 <g fill="rgb(0,0,0)">
-<text x="576" y="72" font-size="12" font-family="Verdana">#Data: 12025209</text></g>
+<text x="576" y="72" font-size="12" font-family="Verdana">#Data: 18459839</text></g>
 <g fill="rgb(0,0,0)">
-<text x="576" y="87" font-size="12" font-family="Verdana">#Used: 11816626</text></g>
+<text x="576" y="87" font-size="12" font-family="Verdana">#Used: 18153789</text></g>
 <g fill="rgb(0,0,0)">
 <text x="576" y="102" font-size="12" font-family="Verdana">Min: 0.000</text></g>
 <g fill="rgb(0,0,0)">
